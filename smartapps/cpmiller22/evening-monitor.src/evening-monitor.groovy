@@ -19,9 +19,10 @@ definition(
     author: "Chris Miller",
     description: "App to send alert if any doors are opened or unlocked after a specified time in the evening..",
     /*category: "Safety &amp; Security",*/
-    iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
-    iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
-    iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png")
+    iconUrl: "https://s3.amazonaws.com/smartapp-icons/ModeMagic/good-night.png",
+    iconX2Url: "https://s3.amazonaws.com/smartapp-icons/ModeMagic/good-night.png",
+    iconX3Url: "https://s3.amazonaws.com/smartapp-icons/ModeMagic/good-night.png"
+    )
 
 
 /*preferences {
