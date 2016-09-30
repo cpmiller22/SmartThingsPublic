@@ -17,7 +17,7 @@ definition(
     name: "Presence Alert",
     namespace: "cpmiller22",
     author: "Chris Miller",
-    description: "Alert on presence changes",
+    description: "Identifies when mobile presence senors are all away, then performs a check to determine if all doors and locks are closed and provides and then sends an alert",
     category: "",
     //iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
     //iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
