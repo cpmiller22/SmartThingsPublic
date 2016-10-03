@@ -89,8 +89,7 @@ private everyoneIsAway() {
             break
         }
     }
-    log.debug "everyoneIsAway: $result"
-    //checkDoor()
+    //log.debug "everyoneIsAway: $result"
     return result
 }
 
@@ -109,15 +108,12 @@ def checkDoor() {
     def list = open.size() > 1 ? "are" : "is"
     if (open) {
     	//format the list and push it.
-		def message = "Security Check Failed: ${open.join(', ')} ${list} open"
+		def message = "Away Check Failed: ${open.join(', ')} ${list} open"
     	log.info message
-        //Hard code push notification for now. 
-        if (sendPush) {
-     		sendPush(message)
-     		}
+        sendPush(message)
       }else {
     log.info "Away Check Successful: No open doors or locks detected." 
-    sendNotificationEvent("Security Check Successful: No open doors or locks detected.")
+    sendPush("Away Check Successful: No open doors or locks detected.")
 	}
     
  }
