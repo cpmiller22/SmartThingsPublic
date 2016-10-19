@@ -24,25 +24,6 @@ definition(
     iconX3Url: "https://s3.amazonaws.com/smartapp-icons/ModeMagic/good-night.png"
     )
 
-
-/*preferences {
-	section("Title") {
-		// TODO: put inputs here
-	}
-}
-*/
-/*preferences {
-/*    section("Turn on when motion detected:") {
-        input "themotion", "capability.motionSensor", required: true, title: "Where?"
-    }
-    section("Time to check") {
-    	input "theTime", "time", title: "Time to execute every day"
-        }
-    section("Items to check") {
-        input "theGarageDoor", "capability.garageDoorControl", required: true
-    }
-}
-*/
 preferences{
     page(name: "selectActions")
 }
@@ -55,11 +36,6 @@ def selectActions() {
             if (actions) {
             // sort them alphabetically
             actions.sort()
-                    /*section("Routine") {
-                        log.trace actions
-                		// use the actions as the options for an enum input
-                		input "action", "enum", title: "Select a trigger routine", options: actions
-                    	} */
                     section("Time to run security check") {
     						input "theTime", "time", title: "Time to execute every day"
         				}
@@ -69,15 +45,11 @@ def selectActions() {
                     section("Locks to check") {
                     	input "locks", "capability.lock", title: "Which Locks?", multiple: true, required: true
                         }
-                    
-                    /** Will fix this section later...
-                    section("Notification"){
-        				input "sendPush", "bool",title: "Send Push Notification?", required: true
-        				input "phone", "phone", title: "Phone Number (for SMS, optional)", required: false
-        				input "pushAndPhone", "enum", title: "Both Push and SMS?", required: false, options: ["Yes", "No"]
-   						}
-                        **/    
-                    
+                     section("Text me at...") {
+        				input("recipients", "contact", title: "Send notifications to") {
+            				input "phone1", "phone", title: "Phone number?", multiple: true
+        					}
+                        }    
             }
     }
 }
@@ -96,8 +68,6 @@ def updated() {
 }
 
 def initialize() {
-	// TODO: subscribe to attributes, devices, locations, etc.
-    /*subscribe(themotion, "motion.active", motionDetectedHandler)*/
     schedule(theTime, checkDoor)
 }
 
@@ -107,7 +77,6 @@ def checkDoor() {
     //log.debug "open doors: ${open}"
     def openLocks = locks.findAll {it?.latestValue("lock") == "unlocked" }
     //log.debug "open locks: ${openLocks}"
-    //open.add("test item")
     for (item in openLocks) {
     	open.add(item)
         //log.debug "${item}"
@@ -119,13 +88,17 @@ def checkDoor() {
     	//format the list and push it.
 		def message = "Security Check Failed: ${open.join(', ')} ${list} open"
     	log.info message
-        //Hard code push notification for now. 
-        if (sendPush) {
-     		sendPush(message)
-     		}
-      }else {
-    log.info "Security Check Successful: No open doors or locks detected." 
-    sendNotificationEvent("Security Check Successful: No open doors or locks detected.")
+        //sendPush(message)
+        if (location.contactBookEnabled) {
+        	sendNotificationToContacts(message, recipients)
+    	}
+    	else {
+        	//sendSms(phone1, message)
+        }
+      }
+      else {
+    	log.info "Security Check Successful: No open doors or locks detected." 
+    	sendPush("Evening Check Successful: No open doors or locks detected.")
 	}
     
  }

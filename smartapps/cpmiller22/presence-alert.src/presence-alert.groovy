@@ -48,6 +48,11 @@ def selectActions() {
                     section("Locks to check") {
                     	input "locks", "capability.lock", title: "Which Locks?", multiple: true, required: true
                         }
+                    section("Text me at...") {
+        				input("recipients", "contact", title: "Send notifications to") {
+            				input "phone1", "phone", title: "Phone number?", multiple: true
+        					}
+                        }
             }
     }
 }
@@ -110,8 +115,15 @@ def checkDoor() {
     	//format the list and push it.
 		def message = "Away Check Failed: ${open.join(', ')} ${list} open"
     	log.info message
-        sendPush(message)
-      }else {
+        //sendPush(message)
+        if (location.contactBookEnabled) {
+        	sendNotificationToContacts(message, recipients)
+    	}
+    	else {
+        	//sendSms(phone1, message)
+        }
+      }
+      else {
     log.info "Away Check Successful: No open doors or locks detected." 
     sendPush("Away Check Successful: No open doors or locks detected.")
 	}
