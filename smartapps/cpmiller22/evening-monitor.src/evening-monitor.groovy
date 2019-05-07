@@ -47,7 +47,8 @@ def selectActions() {
                         }
                      section("Text me at...") {
         				input("recipients", "contact", title: "Send notifications to") {
-            				input "phone1", "phone", title: "Phone number?", multiple: true
+            				input "phone1", "phone", title: "Phone number 1", multiple: true
+                            input "phone2", "phone", title: "Phone number 2", multiple: true
         					}
                         }    
             }
@@ -86,14 +87,14 @@ def checkDoor() {
     def list = open.size() > 1 ? "are" : "is"
     if (open) {
     	//format the list and push it.
-		def message = "Security Check Failed: ${open.join(', ')} ${list} open"
+		def message = "Evening Check Failed: ${open.join(', ')} ${list} open"
     	log.info message
-        //sendPush(message)
         if (location.contactBookEnabled) {
         	sendNotificationToContacts(message, recipients)
     	}
     	else {
-        	//sendSms(phone1, message)
+        	sendSms(phone1, message)
+            sendSms(phone2, message)
         }
       }
       else {
