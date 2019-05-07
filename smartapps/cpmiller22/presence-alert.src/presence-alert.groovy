@@ -51,6 +51,7 @@ def selectActions() {
                     section("Text me at...") {
         				input("recipients", "contact", title: "Send notifications to") {
             				input "phone1", "phone", title: "Phone number?", multiple: true
+                            input "phone2", "phone", title: "Phone number?", multiple: true
         					}
                         }
             }
@@ -69,10 +70,8 @@ def updated() {
 def presenceHandler(evt) {
 	if (evt.value == "present") {
         log.debug "${evt.displayName} has arrived at the ${location}"
-    	//sendPush("${presence.label ?: presence.name} has arrived at the ${location}")
 	} else if (evt.value == "not present") {
 		log.debug "${evt.displayName} has left the ${location}"
-    	//sendPush("${presence.label ?: presence.name} has left the ${location}")
         if (everyoneIsAway()) {
                 log.debug "Everyone is away"
                 checkDoor()
@@ -115,12 +114,12 @@ def checkDoor() {
     	//format the list and push it.
 		def message = "Away Check Failed: ${open.join(', ')} ${list} open"
     	log.info message
-        //sendPush(message)
         if (location.contactBookEnabled) {
         	sendNotificationToContacts(message, recipients)
     	}
     	else {
-        	//sendSms(phone1, message)
+        	sendSms(phone1, message)
+            sendSms(phone2, message)
         }
       }
       else {
