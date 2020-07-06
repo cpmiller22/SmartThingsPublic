@@ -43,7 +43,7 @@ def selectActions() {
                     	input "presence", "capability.presenceSensor", title: "Which sensor?", multiple: true, required: true
         				}
                     section("Doors to check"){
-						input "doors", "capability.contactSensor", title: "Which Door?", multiple: true, required: true
+						input "doors", "capability.contactSensor", title: "Which Door?", multiple: true, required: false
     					}
                     section("Locks to check") {
                     	input "locks", "capability.lock", title: "Which Locks?", multiple: true, required: true
@@ -51,7 +51,7 @@ def selectActions() {
                     section("Text me at...") {
         				input("recipients", "contact", title: "Send notifications to") {
             				input "phone1", "phone", title: "Phone number?", multiple: true
-                            input "phone2", "phone", title: "Phone number?", multiple: true
+                            input "phone2", "phone", title: "Phone number?", multiple: true, required: false
         					}
                         }
             }
