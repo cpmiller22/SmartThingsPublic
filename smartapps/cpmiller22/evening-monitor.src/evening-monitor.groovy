@@ -49,13 +49,13 @@ def selectActions() {
    						input("recipients", "contact", title: "Send notifications to", required: false) {
 							input "sendSuccessPushMessage", "enum", title: "Send a push notification?", options: ["Yes", "No"], required: true
 							input "sendSuccessSMSMessage", "enum", title: "Send a text notification?", options: ["Yes", "No"], required: true
-						}
+							}
                         }
                      section("Fail Notifications") {
    						input("recipients", "contact", title: "Send notifications to", required: false) {
 							input "sendFailMessage", "enum", title: "Send a push notification?", options: ["Yes", "No"], required: false
 							input "sendFailSMSMessage", "enum", title: "Send a text notification?", options: ["Yes", "No"], required: true
-						}
+							}
                         }
                      section("Phone Numbers") {
         				input("recipients", "contact", title: "Send notifications to") {
