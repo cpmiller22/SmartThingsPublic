@@ -48,12 +48,24 @@ def selectActions() {
                     section("Locks to check") {
                     	input "locks", "capability.lock", title: "Which Locks?", multiple: true, required: true
                         }
-                    section("Text me at...") {
-        				input("recipients", "contact", title: "Send notifications to") {
-            				input "phone1", "phone", title: "Phone number?", multiple: true
-                            input "phone2", "phone", title: "Phone number?", multiple: true, required: false
-        					}
+                     section("Success Notifications") {
+   						input("recipients", "contact", title: "Send notifications to", required: false) {
+							input "sendSuccessPushMessage", "enum", title: "Send a push notification?", options: ["Yes", "No"], required: true
+							input "sendSuccessSMSMessage", "enum", title: "Send a text notification?", options: ["Yes", "No"], required: true
+							}
                         }
+                     section("Fail Notifications") {
+   						input("recipients", "contact", title: "Send notifications to", required: false) {
+							input "sendFailMessage", "enum", title: "Send a push notification?", options: ["Yes", "No"], required: false
+							input "sendFailSMSMessage", "enum", title: "Send a text notification?", options: ["Yes", "No"], required: true
+							}
+                        }
+                     section("Phone Numbers") {
+        				input("recipients", "contact", title: "Send notifications to") {
+            				input "phone1", "phone", title: "Phone number 1", multiple: true, required: false
+                            input "phone2", "phone", title: "Phone number 2", multiple: true, required: false
+        					}
+                        }    
             }
     }
 }
@@ -74,7 +86,7 @@ def presenceHandler(evt) {
 		log.debug "${evt.displayName} has left the ${location}"
         if (everyoneIsAway()) {
                 log.debug "Everyone is away"
-                checkDoor()
+                performCheck()
             }
 	}
 }
@@ -86,7 +98,7 @@ private everyoneIsAway() {
     for (device in presence) {
     //log.debug "${device.label} is ${device.currentPresence}"
         if (device.currentPresence == "present") {
-            log.debug "some is still present"
+            log.debug "${device} is still at ${location}"
             // someone is present, so set our our result
             // variable to false and terminate the loop.
             result = false
@@ -97,34 +109,55 @@ private everyoneIsAway() {
     return result
 }
 
-def checkDoor() {
+def performCheck() {
+
+	def openDevices = getStatus()
+    
+    if (openDevices) {
+        //format the open devices list for notifications.
+        def list = openDevices.size() > 1 ? "are" : "is"
+		def message = "Away Check Failed: ${openDevices.join(', ')} ${list} open"
+    	log.info message
+        sendFailMessage(message)
+ 	} else {
+		def message = "Away Check Successful: No open doors or locks detected."
+    	log.info message 
+    	sendSuccessMessage(message)
+	}
+}
+
+def getStatus() {
 	//Find all the doors that are open.
-    def open = doors.findAll { it?.latestValue("contact") == "open" }
-    //log.debug "open doors: ${open}"
+    def openDevices = doors.findAll { it?.latestValue("contact") == "open" }
+    //log.debug "open doors: ${openDevices}"
     def openLocks = locks.findAll {it?.latestValue("lock") == "unlocked" }
     //log.debug "open locks: ${openLocks}"
+    //Find all the open locks and add them to the open device list.
     for (item in openLocks) {
-    	open.add(item)
-        //log.debug "${item}"
+    	openDevices.add(item)
     }
     //log.debug "open items: ${open}"
-    //Group all the open doors in a list, insert "is" or "Are" if the list contains more than one entry.
-    def list = open.size() > 1 ? "are" : "is"
-    if (open) {
-    	//format the list and push it.
-		def message = "Away Check Failed: ${open.join(', ')} ${list} open"
-    	log.info message
-        if (location.contactBookEnabled) {
-        	sendNotificationToContacts(message, recipients)
-    	}
-    	else {
-        	sendSms(phone1, message)
-            sendSms(phone2, message)
-        }
-      }
-      else {
-    log.info "Away Check Successful: No open doors or locks detected." 
-    sendPush("Away Check Successful: No open doors or locks detected.")
-	}
-    
+    //Group all the open doors & locks in a list, insert "is" or "Are" if the list contains more than one entry.
+    //def list = openDevices.size() > 1 ? "are" : "is"
+    return openDevices
+}
+
+private sendSuccessMessage(msg) {
+        if (sendSuccessPushMessage == "Yes") {
+        	sendPush(msg)
+            }
+        if (sendSuccessSMSMessage == "Yes") {
+        	sendSMS(phone1, msg)
+            sendSMS(phone2, msg)
+            }
+ }
+ 
+private sendFailMessage(msg) {
+        if (sendFailPushMessage == "Yes") {
+        	sendPush(msg)
+            }
+        if (sendFailSMSMessage == "Yes") {
+        	sendSms(phone1, msg)
+            sendSms(phone2, msg)
+            }
  }
