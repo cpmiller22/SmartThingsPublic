@@ -25,6 +25,7 @@ definition(
     )
 
 preferences{
+	page("Settings","") {
         section("Time to run security check") {
             input "theTime", "time", title: "Time to execute every day"
         }
@@ -51,7 +52,8 @@ preferences{
                 input "phone1", "phone", title: "Phone number 1", multiple: true, required: false
                 input "phone2", "phone", title: "Phone number 2", multiple: true, required: false
             }
-        }    
+        }
+	}
 }
 
 def installed() {

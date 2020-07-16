@@ -1,7 +1,7 @@
 /**
  *  Presence Alert
  *
- *  Copyright 2016 Chris Miller
+ *  Copyright 2020 Chris Miller
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
@@ -29,6 +29,7 @@ definition(
     
 
 preferences{
+	page("Settings","") {
         section("Devices for presence") {
             input "presence", "capability.presenceSensor", title: "Which sensor?", multiple: true, required: true
         }
@@ -56,8 +57,8 @@ preferences{
                 input "phone2", "phone", title: "Phone number 2", multiple: true, required: false
             }
         }   
+	}
 }
-
 
 def installed() {
 	subscribe(presence, "presence", presenceHandler)
