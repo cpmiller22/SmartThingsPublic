@@ -29,46 +29,35 @@ definition(
     
 
 preferences{
-    page(name: "selectActions")
+        section("Devices for presence") {
+            input "presence", "capability.presenceSensor", title: "Which sensor?", multiple: true, required: true
+        }
+        section("Doors to check"){
+            input "doors", "capability.contactSensor", title: "Which Door?", multiple: true, required: false
+        }
+        section("Locks to check") {
+            input "locks", "capability.lock", title: "Which Locks?", multiple: true, required: true
+        }
+        section("Success Notifications") {
+            input("recipients", "contact", title: "Send notifications to", required: false) {
+                input "sendSuccessPushMessage", "enum", title: "Send a push notification?", options: ["Yes", "No"], required: true
+                input "sendSuccessSMSMessage", "enum", title: "Send a text notification?", options: ["Yes", "No"], required: true
+            }
+        }
+        section("Fail Notifications") {
+            input("recipients", "contact", title: "Send notifications to", required: false) {
+                input "sendFailMessage", "enum", title: "Send a push notification?", options: ["Yes", "No"], required: false
+                input "sendFailSMSMessage", "enum", title: "Send a text notification?", options: ["Yes", "No"], required: true
+            }
+        }
+        section("Phone Numbers") {
+            input("recipients", "contact", title: "Send notifications to") {
+                input "phone1", "phone", title: "Phone number 1", multiple: true, required: false
+                input "phone2", "phone", title: "Phone number 2", multiple: true, required: false
+            }
+        }   
 }
 
-def selectActions() {
-    dynamicPage(name: "selectActions", install: true, uninstall: true) {
-        // Get the available routines
-            def actions = location.helloHome?.getPhrases()*.label
-            if (actions) {
-            // sort them alphabetically
-            actions.sort()
-                    section("Devices for presence") {
-                    	input "presence", "capability.presenceSensor", title: "Which sensor?", multiple: true, required: true
-        				}
-                    section("Doors to check"){
-						input "doors", "capability.contactSensor", title: "Which Door?", multiple: true, required: false
-    					}
-                    section("Locks to check") {
-                    	input "locks", "capability.lock", title: "Which Locks?", multiple: true, required: true
-                        }
-                     section("Success Notifications") {
-   						input("recipients", "contact", title: "Send notifications to", required: false) {
-							input "sendSuccessPushMessage", "enum", title: "Send a push notification?", options: ["Yes", "No"], required: true
-							input "sendSuccessSMSMessage", "enum", title: "Send a text notification?", options: ["Yes", "No"], required: true
-							}
-                        }
-                     section("Fail Notifications") {
-   						input("recipients", "contact", title: "Send notifications to", required: false) {
-							input "sendFailMessage", "enum", title: "Send a push notification?", options: ["Yes", "No"], required: false
-							input "sendFailSMSMessage", "enum", title: "Send a text notification?", options: ["Yes", "No"], required: true
-							}
-                        }
-                     section("Phone Numbers") {
-        				input("recipients", "contact", title: "Send notifications to") {
-            				input "phone1", "phone", title: "Phone number 1", multiple: true, required: false
-                            input "phone2", "phone", title: "Phone number 2", multiple: true, required: false
-        					}
-                        }    
-            }
-    }
-}
 
 def installed() {
 	subscribe(presence, "presence", presenceHandler)
@@ -109,7 +98,7 @@ private everyoneIsAway() {
     return result
 }
 
-def performCheck() {
+private performCheck() {
 
 	def openDevices = getStatus()
     
@@ -126,7 +115,7 @@ def performCheck() {
 	}
 }
 
-def getStatus() {
+private getStatus() {
 	//Find all the doors that are open.
     def openDevices = doors.findAll { it?.latestValue("contact") == "open" }
     //log.debug "open doors: ${openDevices}"

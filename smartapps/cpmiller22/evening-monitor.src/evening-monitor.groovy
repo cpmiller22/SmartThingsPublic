@@ -1,7 +1,7 @@
 /**
  *  Evening Monitor
  *
- *  Copyright 2016 Chris Miller
+ *  Copyright 2020 Chris Miller
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
@@ -25,46 +25,33 @@ definition(
     )
 
 preferences{
-    page(name: "selectActions")
-}
-
-def selectActions() {
-    dynamicPage(name: "selectActions", install: true, uninstall: true) {
-
-        // Get the available routines
-            def actions = location.helloHome?.getPhrases()*.label
-            if (actions) {
-            // sort them alphabetically
-            actions.sort()
-                    section("Time to run security check") {
-    						input "theTime", "time", title: "Time to execute every day"
-        				}
-                    section("Doors to check"){
-						input "doors", "capability.contactSensor", title: "Which Door?", multiple: true, required: false
-    					}
-                    section("Locks to check") {
-                    	input "locks", "capability.lock", title: "Which Locks?", multiple: true, required: true
-                        }
-                     section("Success Notifications") {
-   						input("recipients", "contact", title: "Send notifications to", required: false) {
-							input "sendSuccessPushMessage", "enum", title: "Send a push notification?", options: ["Yes", "No"], required: true
-							input "sendSuccessSMSMessage", "enum", title: "Send a text notification?", options: ["Yes", "No"], required: true
-							}
-                        }
-                     section("Fail Notifications") {
-   						input("recipients", "contact", title: "Send notifications to", required: false) {
-							input "sendFailMessage", "enum", title: "Send a push notification?", options: ["Yes", "No"], required: false
-							input "sendFailSMSMessage", "enum", title: "Send a text notification?", options: ["Yes", "No"], required: true
-							}
-                        }
-                     section("Phone Numbers") {
-        				input("recipients", "contact", title: "Send notifications to") {
-            				input "phone1", "phone", title: "Phone number 1", multiple: true, required: false
-                            input "phone2", "phone", title: "Phone number 2", multiple: true, required: false
-        					}
-                        }    
+        section("Time to run security check") {
+            input "theTime", "time", title: "Time to execute every day"
+        }
+        section("Doors to check"){
+            input "doors", "capability.contactSensor", title: "Which Door?", multiple: true, required: false
+        }
+        section("Locks to check") {
+            input "locks", "capability.lock", title: "Which Locks?", multiple: true, required: true
+        }
+        section("Success Notifications") {
+            input("recipients", "contact", title: "Send notifications to", required: false) {
+                input "sendSuccessPushMessage", "enum", title: "Send a push notification?", options: ["Yes", "No"], required: true
+                input "sendSuccessSMSMessage", "enum", title: "Send a text notification?", options: ["Yes", "No"], required: true
             }
-    }
+        }
+        section("Fail Notifications") {
+            input("recipients", "contact", title: "Send notifications to", required: false) {
+                input "sendFailMessage", "enum", title: "Send a push notification?", options: ["Yes", "No"], required: false
+                input "sendFailSMSMessage", "enum", title: "Send a text notification?", options: ["Yes", "No"], required: true
+            }
+        }
+        section("Phone Numbers") {
+            input("recipients", "contact", title: "Send notifications to") {
+                input "phone1", "phone", title: "Phone number 1", multiple: true, required: false
+                input "phone2", "phone", title: "Phone number 2", multiple: true, required: false
+            }
+        }    
 }
 
 def installed() {
@@ -101,7 +88,7 @@ def performCheck() {
 	}
 }
 
-def getStatus() {
+private getStatus() {
 	//Find all the doors that are open.
     def openDevices = doors.findAll { it?.latestValue("contact") == "open" }
     //log.debug "open doors: ${openDevices}"
