@@ -29,7 +29,6 @@ definition(
     
 
 preferences{
-	page("Settings","") {
         section("Devices for presence") {
             input "presence", "capability.presenceSensor", title: "Which sensor?", multiple: true, required: true
         }
@@ -57,7 +56,6 @@ preferences{
                 input "phone2", "phone", title: "Phone number 2", multiple: true, required: false
             }
         }   
-	}
 }
 
 def installed() {

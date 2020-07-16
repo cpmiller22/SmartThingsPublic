@@ -25,36 +25,35 @@ definition(
     )
 
 preferences{
-	page("Settings","") {
-        section("Time to run security check") {
-            input "theTime", "time", title: "Time to execute every day"
+       section("Time to run security check") {
+            input name: "theTime", type: "time", title: "Time to execute every day"
         }
         section("Doors to check"){
-            input "doors", "capability.contactSensor", title: "Which Door?", multiple: true, required: false
+            input name: "doors", type: "capability.contactSensor", title: "Which Door?", multiple: true, required: false
         }
         section("Locks to check") {
-            input "locks", "capability.lock", title: "Which Locks?", multiple: true, required: true
+            input name: "locks", type: "capability.lock", title: "Which Locks?", multiple: true, required: true
         }
         section("Success Notifications") {
             input("recipients", "contact", title: "Send notifications to", required: false) {
-                input "sendSuccessPushMessage", "enum", title: "Send a push notification?", options: ["Yes", "No"], required: true
-                input "sendSuccessSMSMessage", "enum", title: "Send a text notification?", options: ["Yes", "No"], required: true
+                input name: "sendSuccessPushMessage", type: "enum", title: "Send a push notification?", options: ["Yes", "No"], required: true
+                input name: "sendSuccessSMSMessage", type: "enum", title: "Send a text notification?", options: ["Yes", "No"], required: true
             }
         }
         section("Fail Notifications") {
             input("recipients", "contact", title: "Send notifications to", required: false) {
-                input "sendFailMessage", "enum", title: "Send a push notification?", options: ["Yes", "No"], required: false
-                input "sendFailSMSMessage", "enum", title: "Send a text notification?", options: ["Yes", "No"], required: true
+                input name: "sendFailMessage", type: "enum", title: "Send a push notification?", options: ["Yes", "No"], required: false
+                input name: "sendFailSMSMessage", type: "enum", title: "Send a text notification?", options: ["Yes", "No"], required: true
             }
         }
         section("Phone Numbers") {
             input("recipients", "contact", title: "Send notifications to") {
-                input "phone1", "phone", title: "Phone number 1", multiple: true, required: false
-                input "phone2", "phone", title: "Phone number 2", multiple: true, required: false
+                input name: "phone1", type: "phone", title: "Phone number 1", multiple: true, required: false
+                input name: "phone2", type: "phone", title: "Phone number 2", multiple: true, required: false
             }
         }
-	}
 }
+
 
 def installed() {
 	log.debug "Installed with settings: ${settings}"
